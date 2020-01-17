@@ -14,7 +14,6 @@
 #include "Condition.h"
 #include "Lock.h"
 #include "atomic.h"
-#include "LockFreeQueue.h"
 
 namespace julia
 {
@@ -22,9 +21,6 @@ namespace julia
 class ThreadPool 
 {
 public:
-	//using MutexT = PthreadMutexLock;
-	//using ConditionT = PthreadCondition; 
-	//using LockGuardT = julia::LockGuard<PthreadMutexLock>;
 	using MutexT = std::mutex;
 	using ConditionT = Condition; 
 	using LockGuardT = std::unique_lock<std::mutex>;
@@ -52,7 +48,7 @@ private:
 	MutexT m_mutex;
 	ConditionT m_condition;
 	std::string m_name;
-	MBQueue<Task> m_queue;
+	std::deque<Task> m_queue;
 	
 	boost::ptr_vector<std::thread> m_threads;
 	std::atomic<bool> m_running;

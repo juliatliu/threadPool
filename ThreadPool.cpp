@@ -56,10 +56,8 @@ void ThreadPool::run(const Task& task)
 		task();
 	} else {
 		LockGuardT lock(m_mutex);
-		bool ret = m_queue.push(task);
-		if(ret) {
-			m_condition.notify_one();
-		}
+		m_queue.push_back(task);
+		m_condition.notify_one();
 	}
 }
 
@@ -94,11 +92,10 @@ boost::optional<ThreadPool::Task> ThreadPool::take()
 		m_condition.wait(lock);
 	}
 	boost::optional<Task> result;
-	Task task;
-	bool ret = m_queue.pop(task);
-	if(ret){
+	Task task = m_queue.front();
+	m_queue.pop_front();
+	if(task)
 		result = task;
-	}
 	return result;
 }
 
