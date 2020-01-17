@@ -60,28 +60,23 @@ public:
 		: m_mutex(mutex)
 	{};
 	template<class Predicate>
-	void wait(Predicate pred)
+	void wait(std::unique_lock<std::mutex>& lock, Predicate pred)
 	{
-		std::unique_lock<std::mutex> lockGuard(m_mutex);
-		m_condition.wait(lockGuard, pred);
-
 	}
-	void wait() override final
+	void wait() override final {}
+	void wait(std::unique_lock<std::mutex>& lock) 
 	{
-		std::unique_lock<std::mutex> lockGuard(m_mutex);
-		m_condition.wait(lockGuard);
+		m_condition.wait(lock);
 
 	}
 
 	void notify_one() override final
 	{
-		std::unique_lock<std::mutex> lockGuard(m_mutex);
 		m_condition.notify_one();
 	}
 
 	void notify_all() override final
 	{
-		std::unique_lock<std::mutex> lockGuard(m_mutex);
 		m_condition.notify_all();
 	}
 private:

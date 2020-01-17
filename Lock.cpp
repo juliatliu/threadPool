@@ -64,8 +64,6 @@ bool PthreadMutexLock::unlock()
 }
 
 
-
-
 AtomicSpinLock::AtomicSpinLock()
 	: m_lock(ATOMIC_FLAG_INIT)
 {}

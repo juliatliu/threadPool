@@ -90,7 +90,7 @@ ThreadPool::Task ThreadPool::take()
 	LockGuardT lock(m_mutex);
 	while( m_queue.empty() && m_running )
 	{
-		m_condition.wait();
+		m_condition.wait(lock);
 	}
 	Task task;
 	bool ret = m_queue.pop(task);

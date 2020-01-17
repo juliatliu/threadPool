@@ -22,9 +22,15 @@ class ThreadPool
 {
 
 public:
+	//using MutexT = PthreadMutexLock;
+	//using ConditionT = PthreadCondition; 
+	//using LockGuardT = julia::LockGuard<PthreadMutexLock>;
+	using MutexT = std::mutex;
+	using ConditionT = Condition; 
+	using LockGuardT = std::unique_lock<std::mutex>;
+
 	ThreadPool(const ThreadPool&) = delete;
 	ThreadPool& operator = (const ThreadPool&) = delete;
-	using LockGuardT = julia::LockGuard<PthreadMutexLock>;
 	typedef boost::function<void ()> Task;
 
 	ThreadPool(const std::string& name = std::string());
@@ -43,8 +49,8 @@ private:
 	static void* startThread(void* obj);
 	Task take();
 
-	PthreadMutexLock m_mutex;
-	PthreadCondition m_condition;
+	MutexT m_mutex;
+	ConditionT m_condition;
 	std::string m_name;
 	CAQueue<Task> m_queue;
 
