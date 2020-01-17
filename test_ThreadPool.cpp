@@ -14,10 +14,9 @@ TEST(test_ThreadPool, test)
 	
 
 	for(int i = 0; i < 100; ++i) {
-		std::ostringstream ostr;
-		ostr << "task " << i << " ";
 		pool->run( [&](){
-			std::cout << "tid = " << ::syscall(SYS_gettid) << ", str = " << ostr.str() << std::endl; 
+			std::unique_lock<std::mutex> lock(g_mutex);
+			std::cout << "tid = " << ::syscall(SYS_gettid) << ", str = " << i  << std::endl; 
 		});
 	}
 	pool->stop();

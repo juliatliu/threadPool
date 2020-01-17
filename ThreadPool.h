@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <deque>
 #include <thread>
+#include <boost/optional.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -20,7 +21,6 @@ namespace julia
 
 class ThreadPool 
 {
-
 public:
 	//using MutexT = PthreadMutexLock;
 	//using ConditionT = PthreadCondition; 
@@ -47,13 +47,13 @@ public:
 private:
 	void runInThread();
 	static void* startThread(void* obj);
-	Task take();
+	boost::optional<Task> take();
 
 	MutexT m_mutex;
 	ConditionT m_condition;
 	std::string m_name;
-	CAQueue<Task> m_queue;
-
+	MBQueue<Task> m_queue;
+	
 	boost::ptr_vector<std::thread> m_threads;
 	std::atomic<bool> m_running;
 };

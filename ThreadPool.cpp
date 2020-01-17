@@ -67,10 +67,11 @@ void ThreadPool::runInThread()
 {
 	try{
 		while(m_running) {
-			Task task(take());
+			boost::optional<Task> task = take();
 			if(task)
 			{
-				task();
+				Task realTask = task.get();
+				realTask();
 			}
 		}
 	} catch( const std::exception& ex ) {
@@ -85,20 +86,20 @@ void ThreadPool::runInThread()
 	}
 }
 
-ThreadPool::Task ThreadPool::take()
+boost::optional<ThreadPool::Task> ThreadPool::take()
 {
 	LockGuardT lock(m_mutex);
 	while( m_queue.empty() && m_running )
 	{
 		m_condition.wait(lock);
 	}
+	boost::optional<Task> result;
 	Task task;
 	bool ret = m_queue.pop(task);
 	if(ret){
-		return task;
+		result = task;
 	}
-	else
-		return Task();
+	return result;
 }
 
 }

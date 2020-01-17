@@ -63,7 +63,11 @@ public:
 	void wait(std::unique_lock<std::mutex>& lock, Predicate pred)
 	{
 	}
-	void wait() override final {}
+	void wait() override final 
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_condition.wait(lock);
+	}
 	void wait(std::unique_lock<std::mutex>& lock) 
 	{
 		m_condition.wait(lock);
@@ -81,7 +85,7 @@ public:
 	}
 private:
 	std::mutex& m_mutex;
-	mutable std::condition_variable m_condition;
+	std::condition_variable m_condition;
 };
 
 }
