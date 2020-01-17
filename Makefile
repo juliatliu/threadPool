@@ -26,3 +26,4 @@ clean:
 	rm -f *.o
 	rm -f test_lock
 	rm -f test_ThreadSafe
+	rm -f test_ThreadPool

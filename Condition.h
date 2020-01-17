@@ -16,6 +16,7 @@ public:
 	virtual ~ICondition() {}
 	virtual void notify_one() = 0;
 	virtual void notify_all() = 0;
+	virtual void wait() = 0;
 };
 
 class PthreadCondition : public ICondition
@@ -31,7 +32,7 @@ public:
 		pthread_cond_destroy(&m_condition);
 	}
 
-	void wait()
+	void wait() override final
 	{
 		pthread_cond_wait(&m_condition, m_mutex.getPthreadMutex());
 	}
@@ -65,7 +66,7 @@ public:
 		m_condition.wait(lockGuard, pred);
 
 	}
-	void wait()
+	void wait() override final
 	{
 		std::unique_lock<std::mutex> lockGuard(m_mutex);
 		m_condition.wait(lockGuard);
